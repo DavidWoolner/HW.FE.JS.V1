@@ -1,0 +1,50 @@
+{
+  "title": "People",
+  "description": "Here is a list of imaginary people",
+  "columnDefs": [
+    {
+      "name": "Name",
+      "field": [ "firstName", "lastName" ],
+      "properties": {
+        "renderer": {
+          "type": "text"
+        }
+      }
+    },
+    {
+      "name": "DOB",
+      "field": "dob",
+      "properties": {
+        "renderer": {
+          "type": "date",
+          "format": "MMM D"
+        }
+      }
+    },
+    {
+      "name": "Skills",
+      "field": "skills",
+      "properties": {
+        "renderer": {
+          "type": "list"
+        }
+      }
+    },
+    {
+      "name": "Address",
+      "properties": {
+        "renderer": {
+          "type": "address",
+          "address1": "addressStreet",
+          "city": "addressCity",
+          "region": "addressRegion",
+          "postal": "addressPostal",
+          "country": "addressCountry"
+
+        }
+      }
+    }
+  ]
+
+
+}
