@@ -1,21 +1,40 @@
-<script setup>
+<script lang='ts' setup>
 import TableBody from '../components/TableBody.vue';
 import TableHeader from '../components/TableHeader.vue';
 import grid from '@/assets/grid.json';
-// import { ref, onMounted } from 'vue'
+import { ref, customRef } from 'vue'
 
-// onMounted(() => {
-//   console.log(`Test`)
-// })
+const searchString = useDebouncedRef('');
+
+function useDebouncedRef(value, delay = 200) {
+  let timeout
+  return customRef((track, trigger) => {
+    return {
+      get() {
+        track()
+        return value
+      },
+      set(newValue) {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          value = newValue
+          trigger()
+        }, delay)
+      }
+    }
+  })
+}
+
 </script>
 
 <template>
   <section>
     <h3>{{ grid.title }}</h3>
     <h4>{{ grid.description }}</h4>
+    <input v-model="searchString" type="text" placeholder="Search">
     <table className="table table-striped table-hover table-bordered table-sm">
       <TableHeader />
-      <TableBody />
+      <TableBody :search-string="searchString" />
     </table>
   </section>
 </template>

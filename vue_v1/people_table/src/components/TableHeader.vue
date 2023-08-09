@@ -1,4 +1,4 @@
-<script setup>
+<script lang='ts' setup>
 import { ref, onMounted } from 'vue'
 import grid from '@/assets/grid.json';
 
@@ -19,7 +19,7 @@ onMounted(() => {
 <template>
   <thead>
     <tr>
-      <th v-for="(col, idx) in grid.columnDefs" :key="col+idx" scope="col">{{ col.name }}</th>
+      <th v-for="(col, idx) in grid.columnDefs" :key="idx" scope="col">{{ col.name }}</th>
     </tr>
   </thead>
 </template>
