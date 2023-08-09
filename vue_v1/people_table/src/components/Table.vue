@@ -5,6 +5,7 @@ import grid from '@/assets/grid.json';
 import { ref, customRef } from 'vue'
 
 const searchString = useDebouncedRef('');
+const noData = ref(0)
 
 function useDebouncedRef(value, delay = 200) {
   let timeout
@@ -24,6 +25,7 @@ function useDebouncedRef(value, delay = 200) {
     }
   })
 }
+console.log(noData.value, 'nodata value');
 
 </script>
 
@@ -34,16 +36,27 @@ function useDebouncedRef(value, delay = 200) {
     <input v-model="searchString" type="text" placeholder="Search">
     <table className="table table-striped table-hover table-bordered table-sm">
       <TableHeader />
-      <TableBody :search-string="searchString" />
+      <TableBody :search-string="searchString" no-data />
     </table>
   </section>
+  <div v-if="searchString.length > 1 && noData === 0">
+    <p>Sorry, there were no results for that search</p>
+  </div>
+
+  <div v-if="noData == 0">
+    <hollow-dots-spinner :animation-duration="1000" :dot-size="15" :dots-num="3" color="#ff1d5e" />
+  </div>
 </template>
 
 <style scoped>
   section {
     background-color: white;
     color: black;
-    min-width: 60vw;
+    min-width: 20rem;
     max-width: 100rem;
+  }
+
+  h3, h4 {
+    font-weight: 700;
   }
 </style>

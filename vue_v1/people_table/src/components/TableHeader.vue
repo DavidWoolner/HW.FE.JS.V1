@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import grid from '@/assets/grid.json';
 
 // reactive state
-console.log(grid);
+// console.log(grid);
 
 // functions that mutate state and trigger updates
 function createHeader() {
@@ -12,7 +12,7 @@ function createHeader() {
 
 // lifecycle hooks
 onMounted(() => {
-  console.log(`Test`)
+  // console.log(`Test`)
 })
 </script>
 
@@ -25,5 +25,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
+  th {
+    text-align: center;
+  }
 </style>
