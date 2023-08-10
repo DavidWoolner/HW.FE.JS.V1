@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { HollowDotsSpinner } from 'epic-spinners'
-const { isLoading } = defineProps<{
+const props = defineProps<{
   isLoading: boolean
 }>()
 </script>
 
 
 <template>
-  <div v-if="isLoading">
+  <div v-if="props.isLoading">
     <hollow-dots-spinner
       :animation-duration="1000"
       :dot-size="15"

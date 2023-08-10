@@ -1,11 +1,25 @@
 <script lang="ts" setup>
 import { useDate } from 'vue3-dayjs-plugin/useDate'
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 import people from '@/assets/data/people.json'
 import Spinner from '../components/Spinner.vue'
-import { handleSkills, handleAddress } from '@/helpers/table-helpers'
+import { handleSkills, handleAddress, filteredRows, removeDuplicateRecords } from '@/helpers/table-helpers'
+import { fakeFetch, myFetch } from '@/helpers/mock-api-helpers'
 
-const { searchString } = defineProps<{
+interface Person {
+  id: number
+  firstName: string
+  lastName: string
+  dob: string
+  skills: string | string[]
+  addressStreet: string
+  addressCity: string
+  addressRegion: string
+  addressPostal: string
+  addressCountry: string
+}
+
+const props = defineProps<{
   searchString: string
 }>()
 
@@ -13,64 +27,11 @@ const date = useDate()
 const data = ref([])
 const isLoading = ref(false)
 
-const fakeFetch = (data: Ref, delay: number) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve(data)
-    }, delay)
-  })
-}
-
-const myFetch = async (res: object[]) => {
-  isLoading.value = true
-  return await fakeFetch(res, 2000)
-}
-
-myFetch(people.response.data).then((res) => {
+myFetch(people.response.data, fakeFetch, isLoading).then((res) => {
   data.value = res
   isLoading.value = false
 })
 
-function filteredRows(searchString: string) {
-  const filtered = new Set()
-  if (searchString.length === 0) {
-    return removeDuplicateRecords(data)
-  }
-
-  for (const row of data.value) {
-    for (const item in row) {
-      if (typeof row[item] === 'string') {
-        if (row[item].toLowerCase().includes(searchString.toLowerCase())) {
-          filtered.add(row)
-        }
-      }
-      if (Array.isArray(row[item])) {
-        if (
-          row[item].filter((listItem) =>
-            listItem.toLowerCase().includes(searchString.toLowerCase())
-          ).length > 0
-        ) {
-          filtered.add(row)
-        }
-      }
-    }
-  }
-  filtered.value = filtered
-  return removeDuplicateRecords(filtered.value)
-}
-
-const removeDuplicateRecords = (list: Ref) => {
-  const set = new Set()
-  const unique = []
-
-  list.value.forEach((item) => {
-    if (!set.has(item.id)) {
-      unique.push(item)
-      set.add(item.id)
-    }
-  })
-  return unique
-}
 </script>
 
 <template>
@@ -87,7 +48,7 @@ const removeDuplicateRecords = (list: Ref) => {
         addressRegion,
         addressPostal,
         addressCountry
-      } in filteredRows(searchString)"
+      } in removeDuplicateRecords(filteredRows(props.searchString, data))"
       :key="id"
     >
       <td>{{ `${firstName} ${lastName}` }}</td>
@@ -102,7 +63,7 @@ const removeDuplicateRecords = (list: Ref) => {
       </td>
     </tr>
   </tbody>
-  <div v-if="searchString.length > 0 && filteredRows(searchString).length === 0">
+  <div v-if="props.searchString.length > 0 && removeDuplicateRecords(filteredRows(props.searchString, data)).length === 0">
     <p class="no-results">Sorry, there were no results for that search</p>
   </div>
   <Spinner :is-loading="isLoading"/>
@@ -120,7 +81,6 @@ td {
 th {
   font-weight: 800;
 }
-
 
 .no-results {
   position: absolute;

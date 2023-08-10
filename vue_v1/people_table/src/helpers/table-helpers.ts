@@ -21,34 +21,45 @@ export function handleAddress(city: string | null, region: string | null, zip: s
   return ''
 }
 
-const checkObjectForString = (obj, str) => {
-  return Object.values(obj)
-    .filter((val) => val)
-    .join(' ')
-    .split(',')
-    .join(' ')
-    .toLowerCase()
-    .includes(str.toLowerCase())
+export function filteredRows(searchString: string, data) {
+  const filtered = new Set()
+
+  if (searchString.length === 0) {
+    return data
+  }
+
+  for (const row of data) {
+    for (const element in row) {
+      const rowEle = row[element]
+      if (typeof rowEle === 'string' && stringIsSubstring(rowEle, searchString)) {
+        filtered.add(row)
+      }
+      if (Array.isArray(rowEle) && listContainsMatchStr(rowEle, searchString)) {
+        filtered.add(row)
+      }
+    }
+  }
+
+  return filtered
 }
 
-// function filteredRows(searchString: string) {
-//   // console.log(people.response.data);
-//   //  people.response.data
-//   console.log(searchString, 'supposed to be searchstring before this');
+function stringIsSubstring(targetStr: string, queryStr: string) {
+  return targetStr.toLowerCase().includes(queryStr.toLowerCase())
+}
 
-//   data.value.filter((row: {})=> Object.keys(row).filter(key => {
-//     if (typeof row[key] === 'string') {
-//       return row[key].toLowerCase().includes(searchString.toLowerCase())
-//     }
-//     if (Array.isArray(row[key])) {
-//       console.log(row[key].join(' ').toLowerCase().includes(searchString.toLowerCase()));
+function listContainsMatchStr(list: string[], searchString: string) {
+  return list.some( listItem => stringIsSubstring(listItem, searchString))
+}
 
-//       return row[key].join(' ').toLowerCase().includes(searchString.toLowerCase())
-//     }
-//     if (row[key] === null) {
-//       return
-//     }
+export function removeDuplicateRecords(list) {
+  const unique = []
+  const set    = new Set()
 
-//     return ''
-//   }))
-// }
+  list.forEach((item) => {
+    if (!set.has(item.id)) {
+      unique.push(item)
+      set.add(item.id)
+    }
+  })
+  return unique
+}
