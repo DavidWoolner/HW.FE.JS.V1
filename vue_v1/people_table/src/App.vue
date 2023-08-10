@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import Table from './components/Table.vue';
+import Table from './components/Table.vue'
 </script>
 
 <template>
-
   <main>
     <Table />
   </main>
@@ -20,5 +19,4 @@ main {
     min-width: 100%;
   }
 }
-
 </style>

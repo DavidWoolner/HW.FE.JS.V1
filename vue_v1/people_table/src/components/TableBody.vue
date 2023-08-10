@@ -1,24 +1,19 @@
 <script lang="ts" setup>
 import { useDate } from 'vue3-dayjs-plugin/useDate'
-import { ref, defineEmits, watchEffect } from 'vue'
-import people from '@/assets/people.json'
+import { ref, type Ref } from 'vue'
+import people from '@/assets/data/people.json'
+import Spinner from '../components/Spinner.vue'
 import { handleSkills, handleAddress } from '@/helpers/table-helpers'
-import { HollowDotsSpinner } from 'epic-spinners'
 
-
-
-const { searchString} = defineProps<{
+const { searchString } = defineProps<{
   searchString: string
 }>()
 
 const date = useDate()
 const data = ref([])
-// const filtered = ref([])
-// const emit = defineEmits(["loading"])
-const loading = ref(false)
+const isLoading = ref(false)
 
-
-const fakeFetch = (data, delay) => {
+const fakeFetch = (data: Ref, delay: number) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       return resolve(data)
@@ -26,24 +21,17 @@ const fakeFetch = (data, delay) => {
   })
 }
 
-// watchEffect(data, () => {
-//   emit('loading', loading.value)
-// })
-
-
-const myFetch = async (res) => {
-  loading.value = true
-  // console.log(loading.value);
+const myFetch = async (res: object[]) => {
+  isLoading.value = true
   return await fakeFetch(res, 2000)
 }
 
 myFetch(people.response.data).then((res) => {
   data.value = res
-  loading.value = false
-  console.log(loading.value);
+  isLoading.value = false
 })
 
-const filteredRows = (searchString) => {
+function filteredRows(searchString: string) {
   const filtered = new Set()
   if (searchString.length === 0) {
     return removeDuplicateRecords(data)
@@ -68,11 +56,10 @@ const filteredRows = (searchString) => {
     }
   }
   filtered.value = filtered
-  // noData = filtered.values.length
   return removeDuplicateRecords(filtered.value)
 }
 
-const removeDuplicateRecords = (list) => {
+const removeDuplicateRecords = (list: Ref) => {
   const set = new Set()
   const unique = []
 
@@ -84,7 +71,6 @@ const removeDuplicateRecords = (list) => {
   })
   return unique
 }
-
 </script>
 
 <template>
@@ -119,13 +105,11 @@ const removeDuplicateRecords = (list) => {
   <div v-if="searchString.length > 0 && filteredRows(searchString).length === 0">
     <p class="no-results">Sorry, there were no results for that search</p>
   </div>
-  <div v-if="loading">
-    <hollow-dots-spinner :animation-duration="1000" :dot-size="15" :dots-num="3" color="#297566" class="spinner mt-4"/>
-  </div>
+  <Spinner :is-loading="isLoading"/>
+
 </template>
 
 <style>
-
 tbody {
   min-width: 1000px;
 }
@@ -137,21 +121,10 @@ th {
   font-weight: 800;
 }
 
-.spinner {
-  margin: 0 auto;
-  position: absolute;
-  left: 28rem;
-}
 
 .no-results {
   position: absolute;
   left: 20rem;
   margin-top: 1rem;
-}
-
-@media (max-width: 500px) {
-  .spinner {
-    left: 9rem;
-  }
 }
 </style>

@@ -1,16 +1,13 @@
-<script lang='ts' setup>
-import TableBody from '../components/TableBody.vue';
-import TableHeader from '../components/TableHeader.vue';
-import { HollowDotsSpinner } from 'epic-spinners'
-import grid from '@/assets/grid.json';
-import { ref, customRef } from 'vue'
+<script lang="ts" setup>
+import TableBody from '../components/TableBody.vue'
+import grid from '@/assets/data/grid.json'
+import { customRef } from 'vue'
 
-const searchString = useDebouncedRef('');
-const showLoading = ref(false)
-const mess = ref('')
+const searchString = useDebouncedRef('')
 
-function useDebouncedRef(value, delay = 200) {
-  let timeout
+//Credit to Vue Docs https://vuejs.org/api/reactivity-advanced.html#customref
+function useDebouncedRef(value: string, delay = 200) {
+  let timeout: number
   return customRef((track, trigger) => {
     return {
       get() {
@@ -34,30 +31,32 @@ function useDebouncedRef(value, delay = 200) {
   <section>
     <h3>{{ grid.title }}</h3>
     <h4>{{ grid.description }}</h4>
-    <input v-model="searchString" type="text" placeholder="Search" class="mb-4 form-control">
+    <input v-model="searchString" type="text" placeholder="Search" class="mb-4 form-control" />
     <table className="table table-striped table-hover table-bordered table-sm">
-      <TableHeader />
-      <TableBody :search-string="searchString" @loading="(val) => showLoading = val"/>
+      <thead>
+        <tr>
+          <th v-for="(col, idx) in grid.columnDefs" :key="idx" scope="col">{{ col.name }}</th>
+        </tr>
+      </thead>
+      <TableBody :search-string="searchString" />
     </table>
   </section>
-  <!-- <div v-if="!isLoading">
-    <hollow-dots-spinner :animation-duration="1000" :dot-size="15" :dots-num="3" color="#ff1d5e" />
-  </div> -->
 </template>
 
 <style scoped>
-  section {
-    background-color: white;
-    color: black;
-    min-width: fit-content;
-    max-width: 100rem;
-  }
+section {
+  background-color: white;
+  color: black;
+  min-width: fit-content;
+  max-width: 100rem;
+}
 
-  h3, h4 {
-    font-weight: 700;
-  }
+h3,
+h4 {
+  font-weight: 700;
+}
 
-  * {
-    color: black;
-  }
+th {
+  text-align: center;
+}
 </style>
