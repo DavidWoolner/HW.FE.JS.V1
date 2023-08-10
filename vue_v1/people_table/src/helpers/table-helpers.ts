@@ -1,4 +1,4 @@
-import  { type Person }  from '@/types/interfaces'
+import { type Person } from '@/types/interfaces'
 
 export function handleSkills(skills: string | string[] | null) {
   if (typeof skills === 'string') return skills
@@ -50,12 +50,12 @@ function stringIsSubstring(targetStr: string, queryStr: string) {
 }
 
 function listContainsMatchStr(list: string[], searchString: string) {
-  return list.some( listItem => stringIsSubstring(listItem, searchString))
+  return list.some((listItem) => stringIsSubstring(listItem, searchString))
 }
 
 export function removeDuplicateRecords(list: Person[]) {
   const unique: Person[] = []
-  const set    = new Set()
+  const set = new Set()
 
   list.forEach((item) => {
     if (!set.has(item.id)) {

@@ -74,6 +74,7 @@ th {
   left: 38vw;
   margin-top: 1rem;
 }
+
 @media (max-width: 500px) {
   .no-results {
     left: 2.5rem;

@@ -57,7 +57,7 @@ grid.columnDefs.forEach(col => {
           <th v-for="(col, idx) in grid.columnDefs" :key="idx" scope="col">{{ col.name }}</th>
         </tr>
       </thead>
-      <TableBody :search-string="searchString" :date-format="dateFormat" :dynamic-color="dynamicColor"/>
+      <TableBody :search-string="searchString" :date-format="dateFormat" :dynamic-color="dynamicColor" />
     </table>
   </section>
 </template>
