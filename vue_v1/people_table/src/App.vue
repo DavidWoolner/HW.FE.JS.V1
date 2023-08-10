@@ -10,30 +10,15 @@ import Table from './components/Table.vue';
 </template>
 
 <style scoped>
-/* header {
-  line-height: 1.5;
+main {
+  min-height: 600px;
+  min-width: 80vw;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+@media (max-width: 500px) {
+  main {
+    min-width: 100%;
+  }
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-} */
 </style>

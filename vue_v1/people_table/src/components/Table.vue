@@ -1,11 +1,13 @@
 <script lang='ts' setup>
 import TableBody from '../components/TableBody.vue';
 import TableHeader from '../components/TableHeader.vue';
+import { HollowDotsSpinner } from 'epic-spinners'
 import grid from '@/assets/grid.json';
 import { ref, customRef } from 'vue'
 
 const searchString = useDebouncedRef('');
-const noData = ref(0)
+const showLoading = ref(false)
+const mess = ref('')
 
 function useDebouncedRef(value, delay = 200) {
   let timeout
@@ -25,7 +27,6 @@ function useDebouncedRef(value, delay = 200) {
     }
   })
 }
-console.log(noData.value, 'nodata value');
 
 </script>
 
@@ -33,30 +34,30 @@ console.log(noData.value, 'nodata value');
   <section>
     <h3>{{ grid.title }}</h3>
     <h4>{{ grid.description }}</h4>
-    <input v-model="searchString" type="text" placeholder="Search">
+    <input v-model="searchString" type="text" placeholder="Search" class="mb-4 form-control">
     <table className="table table-striped table-hover table-bordered table-sm">
       <TableHeader />
-      <TableBody :search-string="searchString" no-data />
+      <TableBody :search-string="searchString" @loading="(val) => showLoading = val"/>
     </table>
   </section>
-  <div v-if="searchString.length > 1 && noData === 0">
-    <p>Sorry, there were no results for that search</p>
-  </div>
-
-  <div v-if="noData == 0">
+  <!-- <div v-if="!isLoading">
     <hollow-dots-spinner :animation-duration="1000" :dot-size="15" :dots-num="3" color="#ff1d5e" />
-  </div>
+  </div> -->
 </template>
 
 <style scoped>
   section {
     background-color: white;
     color: black;
-    min-width: 20rem;
+    min-width: fit-content;
     max-width: 100rem;
   }
 
   h3, h4 {
     font-weight: 700;
+  }
+
+  * {
+    color: black;
   }
 </style>

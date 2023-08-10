@@ -1,48 +1,50 @@
 <script lang="ts" setup>
 import { useDate } from 'vue3-dayjs-plugin/useDate'
-import { ref, onMounted } from 'vue'
-import { HollowDotsSpinner } from 'epic-spinners'
+import { ref, defineEmits, watchEffect } from 'vue'
 import people from '@/assets/people.json'
+import { handleSkills, handleAddress } from '@/helpers/table-helpers'
+import { HollowDotsSpinner } from 'epic-spinners'
 
-const { searchString, noData } = defineProps<{
+
+
+const { searchString} = defineProps<{
   searchString: string
-  noData: number
 }>()
 
 const date = useDate()
 const data = ref([])
-const filtered = ref([])
+// const filtered = ref([])
+// const emit = defineEmits(["loading"])
+const loading = ref(false)
 
-function handleSkills(skills: string | string[] | null) {
-  if (typeof skills === 'string') return skills
 
-  return skills ? skills.join(', ') : 'N/A'
+const fakeFetch = (data, delay) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      return resolve(data)
+    }, delay)
+  })
 }
 
-function handleAddress(city: string | null, region: string | null, zip: string | null) {
-  if (city && region && zip) {
-    return `${city}, ${region} ${zip}`
-  }
-  if (!city && region && zip) {
-    return `${region} ${zip}`
-  }
-  if (city && region && !zip) {
-    return `${city}, ${region}`
-  }
-  if (city && !region && zip) {
-    return `${city} ${zip}`
-  }
+// watchEffect(data, () => {
+//   emit('loading', loading.value)
+// })
 
-  return ''
+
+const myFetch = async (res) => {
+  loading.value = true
+  // console.log(loading.value);
+  return await fakeFetch(res, 2000)
 }
+
+myFetch(people.response.data).then((res) => {
+  data.value = res
+  loading.value = false
+  console.log(loading.value);
+})
 
 const filteredRows = (searchString) => {
-  // console.log(people.response.data)
-  // const idx = Number(searchString)
-  // return people.response.data.slice(0, idx)
-  // const data = people.response.data
   const filtered = new Set()
-  // console.log(data);
   if (searchString.length === 0) {
     return removeDuplicateRecords(data)
   }
@@ -83,57 +85,10 @@ const removeDuplicateRecords = (list) => {
   return unique
 }
 
-const checkObjectForString = (obj, str) => {
-  return Object.values(obj)
-    .filter((val) => val)
-    .join(' ')
-    .split(',')
-    .join(' ')
-    .toLowerCase()
-    .includes(str.toLowerCase())
-}
-
-// function filteredRows(searchString: string) {
-//   // console.log(people.response.data);
-//   //  people.response.data
-//   console.log(searchString, 'supposed to be searchstring before this');
-
-//   data.value.filter((row: {})=> Object.keys(row).filter(key => {
-//     if (typeof row[key] === 'string') {
-//       return row[key].toLowerCase().includes(searchString.toLowerCase())
-//     }
-//     if (Array.isArray(row[key])) {
-//       console.log(row[key].join(' ').toLowerCase().includes(searchString.toLowerCase()));
-
-//       return row[key].join(' ').toLowerCase().includes(searchString.toLowerCase())
-//     }
-//     if (row[key] === null) {
-//       return
-//     }
-
-//     return ''
-//   }))
-// }
-
-const fakeFetch = (data, delay) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve(data)
-    }, delay)
-  })
-}
-const doFetch = async (res) => {
-  return await fakeFetch(res, 5000)
-}
-doFetch(people.response.data).then((res) => {
-  data.value = res
-  // noData.value = data.value.length
-})
-
 </script>
 
 <template>
-  <tbody v-if="filteredRows(searchString).length > 0">
+  <tbody>
     <tr
       v-for="{
         id,
@@ -161,14 +116,42 @@ doFetch(people.response.data).then((res) => {
       </td>
     </tr>
   </tbody>
+  <div v-if="searchString.length > 0 && filteredRows(searchString).length === 0">
+    <p class="no-results">Sorry, there were no results for that search</p>
+  </div>
+  <div v-if="loading">
+    <hollow-dots-spinner :animation-duration="1000" :dot-size="15" :dots-num="3" color="#297566" class="spinner mt-4"/>
+  </div>
 </template>
 
 <style>
+
+tbody {
+  min-width: 1000px;
+}
 td {
   vertical-align: middle;
 }
 
 th {
   font-weight: 800;
+}
+
+.spinner {
+  margin: 0 auto;
+  position: absolute;
+  left: 28rem;
+}
+
+.no-results {
+  position: absolute;
+  left: 20rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 500px) {
+  .spinner {
+    left: 9rem;
+  }
 }
 </style>
