@@ -1,6 +1,7 @@
 {
   "title": "People",
   "description": "Here is a list of imaginary people",
+  "dynamicColor": "lightCyan",
   "columnDefs": [
     {
       "name": "Name",

@@ -1,4 +1,7 @@
-export const fakeFetch = (data, delay: number) => {
+import  { type Person }  from '@/types/interfaces'
+import { type Ref } from 'vue'
+
+export const fakeFetch = (data: Person[], delay: number) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       return resolve(data)
@@ -6,7 +9,7 @@ export const fakeFetch = (data, delay: number) => {
   })
 }
 
-export const myFetch = async (res: object[], cb, ref) => {
+export const myFetch = (res: Person[], cb: (res: Person[], delay: number) => Promise<Person[]>, ref: Ref, delay: number) => {
   ref.value = true
-  return await cb(res, 2000)
+  return cb(res, delay)
 }

@@ -1,3 +1,5 @@
+import  { type Person }  from '@/types/interfaces'
+
 export function handleSkills(skills: string | string[] | null) {
   if (typeof skills === 'string') return skills
 
@@ -21,7 +23,7 @@ export function handleAddress(city: string | null, region: string | null, zip: s
   return ''
 }
 
-export function filteredRows(searchString: string, data) {
+export function filteredRows(searchString: string, data: Person[]) {
   const filtered = new Set()
 
   if (searchString.length === 0) {
@@ -40,7 +42,7 @@ export function filteredRows(searchString: string, data) {
     }
   }
 
-  return filtered
+  return Array.from(filtered)
 }
 
 function stringIsSubstring(targetStr: string, queryStr: string) {
@@ -51,8 +53,8 @@ function listContainsMatchStr(list: string[], searchString: string) {
   return list.some( listItem => stringIsSubstring(listItem, searchString))
 }
 
-export function removeDuplicateRecords(list) {
-  const unique = []
+export function removeDuplicateRecords(list: Person[]) {
+  const unique: Person[] = []
   const set    = new Set()
 
   list.forEach((item) => {
