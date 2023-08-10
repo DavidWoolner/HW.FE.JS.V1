@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import { useDate } from 'vue3-dayjs-plugin/useDate'
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import people from '@/assets/data/people.json'
 import Spinner from '../components/Spinner.vue'
 import { handleSkills, handleAddress, filteredRows, removeDuplicateRecords } from '@/helpers/table-helpers'
 import { fakeFetch, myFetch } from '@/helpers/mock-api-helpers'
 
 const props = defineProps<{
-  searchString: string
-  page: number
-  rowLength: number
-  dateFormat: string
+  searchString: Ref<string>
+  dateFormat: Ref<string>
+  dynamicColor: Ref<string>
 }>()
 
 const date = useDate()
@@ -21,10 +20,6 @@ myFetch(people.response.data, fakeFetch, isLoading, 2000).then((res) => {
   data.value = res
   isLoading.value = false
 })
-// console.log(props.skillHighlight);
-
-
-// removeDuplicateRecords(filteredRows(props.searchString, data))
 
 </script>
 
@@ -41,7 +36,7 @@ myFetch(people.response.data, fakeFetch, isLoading, 2000).then((res) => {
       addressRegion,
       addressPostal,
       addressCountry
-    } in removeDuplicateRecords(filteredRows(props.searchString, data)).slice(props.page-2, props.page)" :key="id">
+    } in removeDuplicateRecords(filteredRows(props.searchString, data))" :key="id">
       <td>{{ `${firstName} ${lastName}` }}</td>
       <td>{{ dob.length == 10 ? date(dob).format(props.dateFormat) : 'n/a' }}</td>
       <td>{{ handleSkills(skills) }}</td>
@@ -58,7 +53,7 @@ myFetch(people.response.data, fakeFetch, isLoading, 2000).then((res) => {
     v-if="props.searchString.length > 0 && removeDuplicateRecords(filteredRows(props.searchString, data)).length === 0">
     <p class="no-results">Sorry, there were no results for that search</p>
   </div>
-  <Spinner :is-loading="isLoading" />
+  <Spinner :dynamic-color="props.dynamicColor" :is-loading="isLoading" />
 </template>
 
 <style>
@@ -76,7 +71,12 @@ th {
 
 .no-results {
   position: absolute;
-  left: 20rem;
+  left: 38vw;
   margin-top: 1rem;
+}
+@media (max-width: 500px) {
+  .no-results {
+    left: 2.5rem;
+  }
 }
 </style>

@@ -1,56 +1,12 @@
 <script lang="ts" setup>
 import TableBody from '../components/TableBody.vue'
 import grid from '@/assets/data/grid.json'
-import { ref, customRef } from 'vue'
+import { ref, customRef, type Ref } from 'vue'
+import { type Column } from '@/types/interfaces'
 
-interface Column {
-  name: string
-  field: string | string[]
-  properties: {
-    renderer: {
-      type: string
-      format?: string
-      highlight?: string
-    }
-  }
-}
-
-interface Address extends Column {
-  properties: {
-    renderer: {
-      type: string
-      address1?: string
-      city?: string
-      region?: string
-      postal?: string
-      country?: string
-    }
-  }
-}
-
-interface Grid {
-  title: string
-  description: string
-  columnDefs: Column & Address[]
-}
-
-const searchString = useDebouncedRef('')
-const page = ref(2)
-const rowLength = 0
-const dynamicColor = ref('')
-const dateFormat = ref('')
-
-const nextPage = () => {
-  // if ()
-  page.value += 2
-}
-const prevPage = () => {
-  if (page > 0) {
-    page.value -= 2
-  }
-}
-console.log(rowLength);
-
+const searchString: Ref<string> = useDebouncedRef('')
+const dynamicColor: Ref<string> = ref('')
+const dateFormat: Ref<string> = ref('')
 
 //Credit to Vue Docs https://vuejs.org/api/reactivity-advanced.html#customref
 function useDebouncedRef(value: string, delay = 200) {
@@ -72,7 +28,7 @@ function useDebouncedRef(value: string, delay = 200) {
   })
 }
 
-function setSkillColor(col: Column) {
+function setDynamicColor(col: Column) {
   if (grid.dynamicColor) {
     dynamicColor.value = grid.dynamicColor
   }
@@ -85,12 +41,9 @@ function setDateFormat(col: Column) {
 }
 
 grid.columnDefs.forEach(col => {
-  setSkillColor(col)
+  setDynamicColor(col)
   setDateFormat(col)
 })
-console.log(dateFormat.value);
-
-
 </script>
 
 <template>
@@ -104,13 +57,9 @@ console.log(dateFormat.value);
           <th v-for="(col, idx) in grid.columnDefs" :key="idx" scope="col">{{ col.name }}</th>
         </tr>
       </thead>
-      <TableBody :search-string="searchString" :page="page" :row-length="rowLength" :date-format="dateFormat"/>
+      <TableBody :search-string="searchString" :date-format="dateFormat" :dynamic-color="dynamicColor"/>
     </table>
   </section>
-  <div class="mt-4 text-center">
-    <button @click="prevPage" class="btn btn-primary">Prev Page</button>
-    <button @click="nextPage" class="btn btn-primary ms-4">Next Page</button>
-  </div>
 </template>
 
 <style scoped>

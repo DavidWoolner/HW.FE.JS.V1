@@ -3,7 +3,7 @@ import  { type Person }  from '@/types/interfaces'
 export function handleSkills(skills: string | string[] | null) {
   if (typeof skills === 'string') return skills
 
-  return skills ? skills.join(', ') : 'N/A'
+  return skills ? skills.join(', ') : 'n/a'
 }
 
 export function handleAddress(city: string | null, region: string | null, zip: string | null) {
