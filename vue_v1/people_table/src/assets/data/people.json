@@ -20,7 +20,7 @@
         "lastName": "Doe",
         "dob": "1981-11-05",
         "skills": ["HTML", "CSS"],
-        "addressStreet": "1 Main Street",
+        "addressStreet": "1 Bedford Street",
         "addressCity": "New York",
         "addressRegion": "NY",
         "addressPostal": "10001",
@@ -35,7 +35,7 @@
         "addressStreet": "2 Main Street",
         "addressCity": "New York",
         "addressRegion": "NY",
-        "addressPostal": "10001",
+        "addressPostal": "10002",
         "addressCountry": "USA"
       },
       {

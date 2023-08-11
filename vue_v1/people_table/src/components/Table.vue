@@ -4,9 +4,9 @@ import grid from '@/assets/data/grid.json'
 import { ref, customRef, type Ref } from 'vue'
 import { type Column } from '@/types/interfaces'
 
-const searchString: Ref<string> = useDebouncedRef('')
-const dynamicColor: Ref<string> = ref('')
-const dateFormat: Ref<string> = ref('')
+const searchString: Ref = useDebouncedRef('')
+const dynamicColor: Ref = ref('')
+const dateFormat: Ref = ref('')
 
 //Credit to Vue Docs https://vuejs.org/api/reactivity-advanced.html#customref
 function useDebouncedRef(value: string, delay = 200) {
@@ -28,13 +28,13 @@ function useDebouncedRef(value: string, delay = 200) {
   })
 }
 
-function setDynamicColor(col: Column) {
+function setDynamicColor(col: Column): void {
   if (grid.dynamicColor) {
     dynamicColor.value = grid.dynamicColor
   }
 }
 
-function setDateFormat(col: Column) {
+function setDateFormat(col: Column): void {
   if (col.name == 'DOB' && col?.properties?.renderer?.format) {
     dateFormat.value = col?.properties?.renderer?.format
   }
@@ -50,7 +50,7 @@ grid.columnDefs.forEach(col => {
   <section>
     <h3>{{ grid.title }}</h3>
     <h4>{{ grid.description }}</h4>
-    <input v-model="searchString" type="text" placeholder="Search" class="mb-4 form-control" />
+    <input v-model="searchString" type="text" placeholder="Search for name, skills or address" class="mb-4 form-control" />
     <table :style="{ background: dynamicColor }" className="table table-striped table-hover table-bordered table-sm">
       <thead>
         <tr>
@@ -66,9 +66,6 @@ grid.columnDefs.forEach(col => {
 section {
   background-color: white;
   color: black;
-  min-width: fit-content;
-  max-width: 100rem;
-  min-height: 400px;
 }
 
 h3,

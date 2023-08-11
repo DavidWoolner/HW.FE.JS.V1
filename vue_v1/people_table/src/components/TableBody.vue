@@ -3,6 +3,7 @@ import { useDate } from 'vue3-dayjs-plugin/useDate'
 import { ref, type Ref } from 'vue'
 import people from '@/assets/data/people.json'
 import Spinner from '../components/Spinner.vue'
+import { type Person } from '@/types/interfaces'
 import { handleSkills, handleAddress, filteredRows, removeDuplicateRecords } from '@/helpers/table-helpers'
 import { fakeFetch, myFetch } from '@/helpers/mock-api-helpers'
 
@@ -14,12 +15,24 @@ const props = defineProps<{
 
 const date = useDate()
 const data = ref([])
-const isLoading = ref(false)
+const isLoading = ref<boolean>(false)
 
 myFetch(people.response.data, fakeFetch, isLoading, 2000).then((res) => {
   data.value = res
   isLoading.value = false
 })
+
+const determineData = (searchString: string, data: Person[]) => {
+  return searchString.length === 0 ? removeDuplicateRecords(data) : removeDuplicateRecords(filteredRows(searchString, data))
+}
+
+const noResults = (searchString: string, data: Person[]) => {
+  return searchString.length > 0 && removeDuplicateRecords(filteredRows(searchString, data)).length === 0
+}
+
+const handleDOB = (dob, dateFormat) => {
+  return dob.length == 10 ? date(dob).format(dateFormat) : 'n/a'
+}
 
 </script>
 
@@ -36,9 +49,9 @@ myFetch(people.response.data, fakeFetch, isLoading, 2000).then((res) => {
       addressRegion,
       addressPostal,
       addressCountry
-    } in removeDuplicateRecords(filteredRows(props.searchString, data))" :key="id">
+    } in determineData(searchString, data)" :key="id">
       <td>{{ `${firstName} ${lastName}` }}</td>
-      <td>{{ dob.length == 10 ? date(dob).format(props.dateFormat) : 'n/a' }}</td>
+      <td>{{ handleDOB(dob, dateFormat)}}</td>
       <td>{{ handleSkills(skills) }}</td>
       <td>
         {{ addressStreet }}
@@ -50,7 +63,7 @@ myFetch(people.response.data, fakeFetch, isLoading, 2000).then((res) => {
     </tr>
   </tbody>
   <div
-    v-if="props.searchString.length > 0 && removeDuplicateRecords(filteredRows(props.searchString, data)).length === 0">
+    v-if="noResults(searchString, data)">
     <p class="no-results">Sorry, there were no results for that search</p>
   </div>
   <Spinner :dynamic-color="props.dynamicColor" :is-loading="isLoading" />
